@@ -1,0 +1,73 @@
+services:
+  validator1_keygen:
+    build: .
+    image: atomone:latest
+    container_name: validator1_keygen
+    environment:
+      - NODEID=1
+      - ADDRESS=validator1
+    volumes:
+      - ./validator1_data:/root/atomone_data
+      - ./shared_data:/root/shared_data
+      - ./scripts/validator_keygen.sh:/root/validator_keygen.sh
+    command: /root/validator_keygen.sh
+    networks:
+      - net
+
+  genesis_build:
+    build: .
+    image: atomone:latest
+    container_name: genesis_build
+    environment:
+      - NODEID=0
+      - ADDRESS=genesis
+    volumes:
+      - ./genesis_data:/root/atomone_data
+      - ./shared_data:/root/shared_data
+      - ./scripts/genesis_build.sh:/root/genesis_build.sh
+    command: /root/genesis_build.sh
+    networks:
+      - net
+    depends_on:
+      validator1_keygen:
+        condition: service_completed_successfully
+
+  genesis:
+    build: .
+    image: atomone:latest
+    container_name: genesis
+    environment:
+      - NODEID=0
+      - ADDRESS=genesis
+    volumes:
+      - ./genesis_data:/root/atomone_data
+      - ./shared_data:/root/shared_data
+      - ./scripts/genesis.sh:/root/genesis.sh
+    command: /root/genesis.sh
+    networks:
+      - net
+    depends_on:
+      genesis_build:
+        condition: service_completed_successfully
+
+  validator1:
+    build: .
+    image: atomone:latest
+    container_name: validator1
+    environment:
+      - NODEID=1
+      - ADDRESS=validator1
+    volumes:
+      - ./validator1_data:/root/atomone_data
+      - ./shared_data:/root/shared_data
+      - ./scripts/validator.sh:/root/validator.sh
+    command: /root/validator.sh
+    networks:
+      - net
+    depends_on:
+      genesis_build:
+        condition: service_completed_successfully
+
+networks:
+  net:
+    driver: bridge
