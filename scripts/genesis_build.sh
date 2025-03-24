@@ -8,10 +8,9 @@ mkdir /root/atomone_data
 /atomone/build/atomoned genesis add-genesis-account gen_val_key 1000000000000uatone --home /root/atomone_data --keyring-backend test
 for validator in /root/shared_data/*; do
 	VAL_ADDR=`cat $validator`
-	echo "maybe Adding this validator account $VAL_ADDR"
-	if [[ "$VAL_ADDR" =~ "_address" ]]; then
+	if [[ "$VAL_ADDR" =~ "_ADDRESS" ]]; then
 		/atomone/build/atomoned genesis add-genesis-account $VAL_ADDR 1000000000000uatone --home /root/atomone_data 
-		echo "Added!"
+		/atomone/build/atomoned genesis gentx $VAL_ADDR 1000000000uatone --home /root/atomone_data --chain-id liveness
 	fi
 done
 /atomone/build/atomoned genesis gentx gen_val_key 1000000000uatone --home /root/atomone_data --chain-id liveness
