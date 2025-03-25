@@ -18,6 +18,6 @@ done
 sed -i.bak 's#^minimum-gas-prices = .*#minimum-gas-prices = "0.001uatone,0.001uphoton"#g' /root/atomone_data/config/app.toml
 cp /root/atomone_data/config/genesis.json /root/shared_data/genesis.json
 GENESIS_ID=$(/atomone/build/atomoned tendermint show-node-id --home /root/atomone_data)
-echo "${GENESIS_ID}@${ADDRESS}:26656"> /root/shared_data/genesis_${NODEID}_ID
+echo "${GENESIS_ID}@${ADDRESS}:26656"> /root/shared_data/genesis${NODEID}_ID
 #/atomone/build/atomoned start --home /root/atomone_data
 

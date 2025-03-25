@@ -12,42 +12,60 @@ services:
       - ./scripts/validator_keygen.sh:/root/validator_keygen.sh
     command: /root/validator_keygen.sh
     networks:
-      - net
-
-  genesis_build:
+      - net_genesis0_validator1
+  validator2_keygen:
     build: .
     image: atomone:latest
-    container_name: genesis_build
+    container_name: validator2_keygen
+    environment:
+      - NODEID=2
+      - ADDRESS=validator2
+    volumes:
+      - ./validator2_data:/root/atomone_data
+      - ./shared_data:/root/shared_data
+      - ./scripts/validator_keygen.sh:/root/validator_keygen.sh
+    command: /root/validator_keygen.sh
+    networks:
+      - net_validator2_node2
+
+  genesis0_build:
+    build: .
+    image: atomone:latest
+    container_name: genesis0_build
     environment:
       - NODEID=0
-      - ADDRESS=genesis
+      - ADDRESS=genesis0
     volumes:
-      - ./genesis_data:/root/atomone_data
+      - ./genesis0_data:/root/atomone_data
       - ./shared_data:/root/shared_data
       - ./scripts/genesis_build.sh:/root/genesis_build.sh
     command: /root/genesis_build.sh
     networks:
-      - net
+      - net_genesis0_validator1
+      - net_node2_genesis0
     depends_on:
       validator1_keygen:
         condition: service_completed_successfully
+      validator2_keygen:
+        condition: service_completed_successfully
 
-  genesis:
+  genesis0:
     build: .
     image: atomone:latest
-    container_name: genesis
+    container_name: genesis0
     environment:
       - NODEID=0
-      - ADDRESS=genesis
+      - ADDRESS=genesis0
     volumes:
-      - ./genesis_data:/root/atomone_data
+      - ./genesis0_data:/root/atomone_data
       - ./shared_data:/root/shared_data
       - ./scripts/genesis.sh:/root/genesis.sh
     command: /root/genesis.sh
     networks:
-      - net
+      - net_genesis0_validator1
+      - net_node2_genesis0
     depends_on:
-      genesis_build:
+      genesis0_build:
         condition: service_completed_successfully
 
   validator1:
@@ -57,17 +75,62 @@ services:
     environment:
       - NODEID=1
       - ADDRESS=validator1
+      - PEERS=genesis0
     volumes:
       - ./validator1_data:/root/atomone_data
       - ./shared_data:/root/shared_data
       - ./scripts/validator.sh:/root/validator.sh
     command: /root/validator.sh
     networks:
-      - net
+      - net_genesis0_validator1
     depends_on:
-      genesis_build:
+      genesis0_build:
+        condition: service_completed_successfully
+  validator2:
+    build: .
+    image: atomone:latest
+    container_name: validator2
+    environment:
+      - NODEID=2
+      - ADDRESS=validator2
+      - PEERS=node2
+    volumes:
+      - ./validator2_data:/root/atomone_data
+      - ./shared_data:/root/shared_data
+      - ./scripts/validator.sh:/root/validator.sh
+    command: /root/validator.sh
+    networks:
+      - net_validator2_node2
+    depends_on:
+      genesis0_build:
+        condition: service_completed_successfully
+
+  node2:
+    build: .
+    image: atomone:latest
+    container_name: node2
+    environment:
+      - NODEID=2
+      - ADDRESS=node2
+      - PEERS=genesis0 validator2
+    volumes:
+      - ./node2_data:/root/atomone_data
+      - ./shared_data:/root/shared_data
+      - ./scripts/node.sh:/root/node.sh
+    command: /root/node.sh
+    networks:
+      - net_node2_genesis0
+      - net_validator2_node2
+    depends_on:
+      genesis0_build:
         condition: service_completed_successfully
 
 networks:
-  net:
+  net_genesis0_validator1:
     driver: bridge
+  net_node2_genesis0:
+    driver: bridge
+  net_validator2_node2:
+    driver: bridge
+
+

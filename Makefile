@@ -6,15 +6,20 @@ genesis_data:
 shared_data:
 	mkdir shared_data
 
-validator1_data:
-	mkdir validator1_data
+config: node_net.dot
+	./generateNet.py node_net.dot > docker-compose.yaml
 
 run: genesis_data shared_data
 	docker compose up -d
+
+node_net.pdf: node_net.dot # requires graphviz installed (brew install graphviz)
+	dot -Tpdf -O node_net.dot
+	mv node_net.dot.pdf node_net.pdf
 
 stop:
 	docker compose down
 
 clean:
-	for dir in $(NODES_DATA);do cd $${dir}; rm -rf *; cd ..; done
+	rm -rf $(NODES_DATA)
+	@rm -f node_net.pdf 
 
