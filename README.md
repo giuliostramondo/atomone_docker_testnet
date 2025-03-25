@@ -2,7 +2,7 @@
 
 The aim of this project download and build the atomone daemon fromgithub and deploy a testnet. The testned is built using isolated docker containers for each node.
 
-The topology of the network is specified in `node_net.dot`. Here, nodes starting with `v` (e.g. `v1`) represent validator nodes, nodes starting with `n` (e.g. `n2`) represents a full node. The node `g0` must be present, and it represent the genesis node - node that will produce the `genesis.json` file - which will become a validator when the blockchain is started.
+The topology of the network is specified in `node_net.dot`. The user can modify the `node_net.dot` to generate different networks. Here, nodes starting with `v` (e.g. `v1`) represent validator nodes, nodes starting with `n` (e.g. `n2`) represents a full node. The node `g0` must be present, and it represent the genesis node - node that will produce the `genesis.json` file - which will become a validator when the blockchain is started.
 
 For each pair of linked nodes a separate docker network is created, this implies that if nodes are not linked (using `--`) in `node_net.dot` they will not be able to communicate directly.
 
