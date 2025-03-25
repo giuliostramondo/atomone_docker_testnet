@@ -39,6 +39,7 @@ def generate_networks(graph):
         link_name = f"net_{source}_{dest}"
         network_string += f"  {link_name}:\n"
         network_string += "    driver: bridge\n"
+        network_string += f"    name: {link_name}\n"
     return network_string
 
 def generate_validator_keygen(graph,nodes):

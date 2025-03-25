@@ -128,9 +128,12 @@ services:
 networks:
   net_genesis0_validator1:
     driver: bridge
+    name: net_genesis0_validator1
   net_node2_genesis0:
     driver: bridge
+    name: net_node2_genesis0
   net_validator2_node2:
     driver: bridge
+    name: net_validator2_node2
 
 
