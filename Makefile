@@ -6,8 +6,13 @@ genesis_data:
 shared_data:
 	mkdir shared_data
 
+build:
+	rm -rf ./atomone
+	cp -r ../atomone .
+	docker build -t atomone .
+
 config: node_net.dot
-	./generateNet.py node_net.dot > docker-compose.yaml
+	python3 generateNet.py node_net.dot > docker-compose.yaml
 
 run: genesis_data shared_data
 	docker compose up -d
