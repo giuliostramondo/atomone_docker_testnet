@@ -8,6 +8,7 @@ COPY --from=golang:1.22.10-alpine /usr/local/go/ /usr/local/go/
 
 ENV GOPATH="/usr/local/go"
 ENV PATH="${GOPATH}/bin:${PATH}"
+ENV ENV=/root/.profile
 #RUN git clone https://github.com/atomone-hub/atomone.git
 COPY ./atomone /atomone
 WORKDIR "/atomone"

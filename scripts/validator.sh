@@ -8,6 +8,7 @@ atomoned tx staking create-validator --amount "100uatone" --from val_key   --mon
 
 sleep 10
 atomoned tx staking delegate $(atomoned keys show val_key --bech val -a  --home ~/atomone_data)  1000000uatone --from val_key --fees 2000uphoton --home ~/atomone_data -y
+
 }
 
 mkdir /root/atomone_data
@@ -19,6 +20,8 @@ sed -i.bak 's#^minimum-gas-prices = .*#minimum-gas-prices = "0.001uatone,0.001up
 cp /root/shared_data/genesis.json /root/atomone_data/config/genesis.json 
 PERSISTENT_PEERS=""; for p in ${PEERS};do PERSISTENT_PEERS="`cat /root/shared_data/${p}_ID`,$PERSISTENT_PEERS" ;done
 sed -i.bak "s#^persistent_peers = .*#persistent_peers = \"${PERSISTENT_PEERS}\"#g" /root/atomone_data/config/config.toml
+MY_VALIDATOR_ADDRESS=$(/atomone/build/atomoned keys show val_key -a --keyring-backend test --home /root/atomone_data)
+echo "export PS1=\"${MY_VALIDATOR_ADDRESS}@validator_${NODEID}:\w \$ \"">> /root/.profile
 create_validator &
 /atomone/build/atomoned start --home /root/atomone_data 
 
